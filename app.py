@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, func
 from flask import Flask, jsonify
 
 
-# database engine and details
+# database engine and columns
 engine = create_engine("sqlite:///hawaii.sqlite")
 Base = automap_base()
 Base.prepare(engine, reflect=True)
@@ -14,21 +14,21 @@ Station = Base.classes.station
 # app
 app = Flask(__name__)
 
-
+# main route to define endpoints
 @app.route("/")
 def welcome():
     return (
         f"Available Routes:<br/>"
-        f"Precipitation: /api/v1.0/precipitation<br/>"
-        f"List of Stations: /api/v1.0/stations<br/>"
-        f"Temperature for one year: /api/v1.0/tobs<br/>"
-        f"Temperature stat from the start date(yyyy-mm-dd): /api/v1.0/yyyy-mm-dd<br/>"
-        f"Temperature stat from start to end dates(yyyy-mm-dd): /api/v1.0/yyyy-mm-dd/yyyy-mm-dd"
+        f"Precipitation: /api/precipitation<br/>"
+        f"List of Stations: /api/stations<br/>"
+        f"Temperature for one year: /api/tobs<br/>"
+        f"Temperature stat from the start date(yyyy-mm-dd): /api/yyyy-mm-dd<br/>"
+        f"Temperature stat from start to end dates(yyyy-mm-dd): /api/yyyy-mm-dd/yyyy-mm-dd"
     )
 
 
 # precipitation endpoint
-@app.route("/api/v1.0/precipitation")
+@app.route("/api/precipitation")
 def precipitation():
     session = Session(engine)
     sel = [Measurement.date, Measurement.prcp]
@@ -46,7 +46,7 @@ def precipitation():
 
 
 # stations endpoint
-@app.route("/api/v1.0/stations")
+@app.route("/api/stations")
 def stations():
     session = Session(engine)
     sel = [
@@ -73,7 +73,7 @@ def stations():
 
 
 # tobs endpoints
-@app.route("/api/v1.0/<start>")
+@app.route("/api/tobs/<start>")
 def get_tobs_start(start):
     session = Session(engine)
     queryresult = (
@@ -98,7 +98,7 @@ def get_tobs_start(start):
     return jsonify(tobsall)
 
 
-@app.route("/api/v1.0/<start>/<stop>")
+@app.route("/api/tobs/<start>/<stop>")
 def get_tobs_start_stop(start, stop):
     session = Session(engine)
     queryresult = (
@@ -124,7 +124,7 @@ def get_tobs_start_stop(start, stop):
     return jsonify(tobsall)
 
 
-@app.route("/api/v1.0/tobs")
+@app.route("/api/tobs")
 def tobs():
     session = Session(engine)
     lateststr = (
